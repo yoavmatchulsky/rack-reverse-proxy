@@ -68,7 +68,7 @@ module Rack
           end
         end
 
-        [res.code, create_response_headers(res), [body]]
+        [res.code, create_response_headers(res, body), [body]]
       }
     end
 
@@ -88,13 +88,14 @@ module Rack
       end
     end
 
-    def create_response_headers http_response
+    def create_response_headers(http_response, body)
       response_headers = Rack::Utils::HeaderHash.new(http_response.to_hash)
       # handled by Rack
       response_headers.delete('status')
       # TODO: figure out how to handle chunked responses
       response_headers.delete('transfer-encoding')
       # TODO: Verify Content Length, and required Rack headers
+      response_headers['Content-Length'] = body.bytesize.to_s
       response_headers
     end
 
