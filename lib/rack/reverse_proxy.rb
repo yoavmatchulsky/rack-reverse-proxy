@@ -20,7 +20,7 @@ module Rack
 
       uri = matcher.get_uri(rackreq.fullpath,env)
 
-      puts 'URI: uri'
+      puts "URI: #{uri.host} : #{uri.port}"
 
       all_opts = @global_options.dup.merge(matcher.options)
       headers = Rack::Utils::HeaderHash.new
@@ -71,8 +71,6 @@ module Rack
           raise "method not supported: #{m}"
         end
 
-        puts 'BEFORE REQUEST'
-
         body = ''
         res = http.request(req) do |res|
           res.read_body do |segment|
@@ -80,7 +78,8 @@ module Rack
           end
         end
 
-        puts 'AFTER REQUEST'
+        puts "BODY:"
+        puts body.to_yaml
 
         puts "res.code: #{res.code}"
 
