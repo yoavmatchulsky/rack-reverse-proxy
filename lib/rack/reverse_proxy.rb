@@ -71,6 +71,10 @@ module Rack
           raise "method not supported: #{m}"
         end
 
+        puts "#method #{req.method}"
+        puts "#request_body_permitted? #{req.request_body_permitted?}"
+        puts "#response_body_permitted? #{req.response_body_permitted?}"
+
         body = ''
         res = http.request(req) do |res|
           res.read_body do |segment|
