@@ -19,6 +19,9 @@ module Rack
       puts '[Rack::ReverseProxy] HAS A MATCHER'
 
       uri = matcher.get_uri(rackreq.fullpath,env)
+
+      puts 'URI: uri'
+
       all_opts = @global_options.dup.merge(matcher.options)
       headers = Rack::Utils::HeaderHash.new
       env.each { |key, value|
@@ -29,6 +32,10 @@ module Rack
       }
       headers['HOST'] = uri.host if all_opts[:preserve_host]
       headers['X-Forwarded-Host'] = rackreq.host if all_opts[:x_forwarded_host]
+
+      puts 'HEADERS:'
+      puts headers.to_yaml
+      puts '----------------------------'
 
       session = Net::HTTP.new(uri.host, uri.port)
       session.read_timeout=all_opts[:timeout] if all_opts[:timeout]
@@ -64,12 +71,18 @@ module Rack
           raise "method not supported: #{m}"
         end
 
+        puts 'BEFORE REQUEST'
+
         body = ''
         res = http.request(req) do |res|
           res.read_body do |segment|
             body << segment
           end
         end
+
+        puts 'AFTER REQUEST'
+
+        puts "res.code: #{res.code}"
 
         puts '**********************************'
 
