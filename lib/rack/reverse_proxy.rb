@@ -15,6 +15,9 @@ module Rack
       matcher = get_matcher rackreq.fullpath
       return @app.call(env) if matcher.nil?
 
+      puts '**********************************'
+      puts '[Rack::ReverseProxy] HAS A MATCHER'
+
       uri = matcher.get_uri(rackreq.fullpath,env)
       all_opts = @global_options.dup.merge(matcher.options)
       headers = Rack::Utils::HeaderHash.new
@@ -67,6 +70,8 @@ module Rack
             body << segment
           end
         end
+
+        puts '**********************************'
 
         [res.code, create_response_headers(res, body), [body]]
       }
